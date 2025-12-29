@@ -195,7 +195,49 @@ function showQuestions(categorie) {
     let question = categorie[index].question
     let options = categorie[index].options
     let answer = categorie[index].answer
-    console.log(question)
-    console.log(options)
-    console.log(answer)
+    let p = document.createElement("p")
+    p.textContent = question
+    let div = document.createElement("div")
+    options.forEach(option => {
+        let btn = document.createElement("button")
+        btn.textContent = option
+        btn.className = "option-btn"
+        btn.addEventListener("click",() => {
+            let optionBtn = document.querySelectorAll(".option-btn")
+            isCorrect(btn,answer,optionBtn)
+        })
+        div.appendChild(btn)
+    })
+    let nextBtn = document.createElement("button")
+    nextBtn.textContent = "suivant"
+    nextBtn.addEventListener("click",() => {
+        showNext(categorie)
+    })
+    questionShow.append(p, div, nextBtn)    
+}
+
+function showNext(categorie) {
+    if(index === 7) {
+        alert("the end")
+        return
+    }
+    index++
+    questionShow.innerHTML = ""
+    showQuestions(categorie)
+}
+
+function disabelBtns(optionBtn) {
+    optionBtn.forEach(btn => {
+        btn.disabled = "true"
+    })
+}
+
+function isCorrect(btn,answer,optionBtn) {
+    if(btn.textContent === answer) {
+        btn.style.color = "green"
+        disabelBtns(optionBtn)
+    }else if(btn.textContent !== answer) {
+        btn.style.color = "red"
+        disabelBtns(optionBtn)
+    }
 }
