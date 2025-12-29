@@ -165,20 +165,22 @@ const quizData = {
             answer: "Christophe Colomb"
         },
         {
-            question: "Quand a été signée la Déclaration d'Indépendance des États-Unis ?",
-            options: ["4 juillet 1776", "14 juillet 1789", "4 novembre 1800", "1 janvier 1801"],
-            answer: "4 juillet 1776"
+            question : "Quel physicien a formulé la théorie de la relativité générale ?",
+            options : ["Isaac Newton", "Niels Bohr", "Albert Einstein", "Stephen Hawking"],
+            answer : "Albert Einstein"
         }
     ]
 };
-
 
 let header = document.getElementById("app-header")
 let footer = document.getElementById("app-footer")
 let categoriesContainer = document.getElementById("categories-container")
 let categoriesBtns = document.querySelectorAll(".choise")
 let questionShow = document.getElementById("question-show")
+let pointsShow = document.getElementById("points-show")
+let higthScore = 0
 let index = 0
+let points = 0 
 
 categoriesBtns.forEach(btn => {
     btn.addEventListener("click",() => {
@@ -195,6 +197,7 @@ function showQuestions(categorie) {
     let question = categorie[index].question
     let options = categorie[index].options
     let answer = categorie[index].answer
+    let length = categorie.length - 1
     let p = document.createElement("p")
     p.textContent = question
     let div = document.createElement("div")
@@ -203,23 +206,31 @@ function showQuestions(categorie) {
         btn.textContent = option
         btn.className = "option-btn"
         btn.addEventListener("click",() => {
-            let optionBtn = document.querySelectorAll(".option-btn")
-            isCorrect(btn,answer,optionBtn)
+            isCorrect(btn,answer)
         })
         div.appendChild(btn)
     })
+
     let nextBtn = document.createElement("button")
     nextBtn.textContent = "suivant"
     nextBtn.addEventListener("click",() => {
-        showNext(categorie)
+        showNext(categorie,length)
     })
     questionShow.append(p, div, nextBtn)    
 }
 
-function showNext(categorie) {
-    if(index === 7) {
-        alert("the end")
-        return
+function showNext(categorie,length) {
+    if(index === length) {
+        index = 0
+        let p = document.createElement("p")
+        p.textContent = `tes points sont ${points}`
+        let againBtn = document.createElement("button")
+        againBtn.textContent = "joue encore"
+        againBtn.addEventListener("click",playAgain)
+        questionShow.innerHTML = ""
+        pointsShow.append(p, againBtn)
+        
+        return 
     }
     index++
     questionShow.innerHTML = ""
@@ -232,12 +243,31 @@ function disabelBtns(optionBtn) {
     })
 }
 
-function isCorrect(btn,answer,optionBtn) {
+function correct(optionBtn,answer) {
+    optionBtn.forEach(btn => {
+        if(btn.textContent === answer) {
+            btn.style.backgroundColor = "green"
+        }
+    })
+}
+
+function isCorrect(btn,answer) {
+    let optionBtn = document.querySelectorAll(".option-btn")
     if(btn.textContent === answer) {
-        btn.style.color = "green"
+        btn.style.backgroundColor = "green"
         disabelBtns(optionBtn)
+        points++
     }else if(btn.textContent !== answer) {
-        btn.style.color = "red"
+        btn.style.backgroundColor = "red"
         disabelBtns(optionBtn)
+        correct(optionBtn,answer)       
     }
+}
+
+function playAgain() {
+    header.style.display = "block"
+    footer.style.display = "block"
+    categoriesContainer.style.display = "block"
+    pointsShow.innerHTML = ""
+    points = 0
 }
