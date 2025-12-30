@@ -179,7 +179,12 @@ let categoriesBtns = document.querySelectorAll(".choise")
 let questionShow = document.getElementById("question-show")
 let pointsShow = document.getElementById("points-show")
 let showHighScore = document.getElementById("higth-score")
-let higthScore = localStorage.getItem("higthScore") || 0
+let highScore = Number(localStorage.getItem("highScore")) || 0
+let timeToNext
+let timeForNext
+let timeYouTake
+let time = 30
+let count = 0
 let index = 0
 let points = 0 
 
@@ -189,9 +194,14 @@ categoriesBtns.forEach(btn => {
         let categorie = quizData[choise]
         showQuestions(categorie)
     })
+
+    let timeYouTake = setInterval(() => {
+        count++
+    },1000)
 })
 
 function showQuestions(categorie) {
+    clearInterval(timeToNext)
     header.style.display = "none"
     footer.style.display = "none"
     categoriesContainer.style.display = "none"
@@ -202,36 +212,56 @@ function showQuestions(categorie) {
     let length = categorie.length - 1
     let p = document.createElement("p")
     p.textContent = question
+    let timer = document.createElement("p")
+    timer.textContent = `${time}s`
     let div = document.createElement("div")
     options.forEach(option => {
         let btn = document.createElement("button")
         btn.textContent = option
         btn.className = "option-btn"
         btn.addEventListener("click",() => {
+            clearInterval(timeForNext)
+            clearInterval(timeToNext)
+            time = 30
             isCorrect(btn,answer)
         })
         div.appendChild(btn)
     })
+
+    timeForNext = setInterval(() => {
+        time--
+        timer.textContent = `${time}s`
+    },1000)
+
+    timeToNext = setInterval(() => {
+        clearInterval(timeForNext)
+        time = 30
+        showCorrect(answer)
+    },30000)
 
     let nextBtn = document.createElement("button")
     nextBtn.textContent = "suivant"
     nextBtn.addEventListener("click",() => {
         showNext(categorie,length)
     })
-    questionShow.append(p, div, nextBtn)    
+    questionShow.append(p, timer, div, nextBtn)    
 }
 
 function showNext(categorie,length) {
     if(index === length) {
+        clearInterval(timeToNext)
+        clearInterval(timeYouTake)
         index = 0
+        let t = document.createElement("p")
+        t.textContent = `your time is ${count}`
+        count = 0
         let p = document.createElement("p")
         p.textContent = `tes points sont ${points}`
         let againBtn = document.createElement("button")
         againBtn.textContent = "joue encore"
         againBtn.addEventListener("click",playAgain)
         questionShow.innerHTML = ""
-        pointsShow.append(p, againBtn)
-        
+        pointsShow.append(p, t, againBtn)
         return 
     }
     index++
@@ -283,3 +313,16 @@ function playAgain() {
     showHighScore.textContent = `high score is ${highScore}`;
     points = 0;
 }
+
+function showCorrect(answer) {
+    clearInterval(timeToNext)
+    let optionBtn = document.querySelectorAll(".option-btn")
+    optionBtn.forEach(btn => {
+        if(btn.textContent === answer) {
+            btn.style.backgroundColor = "green"
+        }
+    })
+    disabelBtns(optionBtn)
+}
+
+showHighScore.textContent = `high score is ${highScore}`
