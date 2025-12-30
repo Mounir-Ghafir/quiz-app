@@ -178,7 +178,8 @@ let categoriesContainer = document.getElementById("categories-container")
 let categoriesBtns = document.querySelectorAll(".choise")
 let questionShow = document.getElementById("question-show")
 let pointsShow = document.getElementById("points-show")
-let higthScore = 0
+let showHighScore = document.getElementById("higth-score")
+let higthScore = localStorage.getItem("higthScore") || 0
 let index = 0
 let points = 0 
 
@@ -194,6 +195,7 @@ function showQuestions(categorie) {
     header.style.display = "none"
     footer.style.display = "none"
     categoriesContainer.style.display = "none"
+    showHighScore.style.display = "none"
     let question = categorie[index].question
     let options = categorie[index].options
     let answer = categorie[index].answer
@@ -265,9 +267,19 @@ function isCorrect(btn,answer) {
 }
 
 function playAgain() {
-    header.style.display = "block"
-    footer.style.display = "block"
-    categoriesContainer.style.display = "block"
-    pointsShow.innerHTML = ""
-    points = 0
+    header.style.display = "block";
+    footer.style.display = "block";
+    categoriesContainer.style.display = "block";
+    showHighScore.style.display = "block";
+    pointsShow.innerHTML = "";
+
+    let highScore = Number(localStorage.getItem("highScore")) || 0;
+
+    if (points > highScore) {
+        highScore = points;
+        localStorage.setItem("highScore", highScore);
+    }
+
+    showHighScore.textContent = `high score is ${highScore}`;
+    points = 0;
 }
