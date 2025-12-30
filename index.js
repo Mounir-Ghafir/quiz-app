@@ -182,9 +182,8 @@ let showHighScore = document.getElementById("higth-score")
 let highScore = Number(localStorage.getItem("highScore")) || 0
 let timeToNext
 let timeForNext
-let timeYouTake
+let startTime
 let time = 30
-let count = 0
 let index = 0
 let points = 0 
 
@@ -193,11 +192,8 @@ categoriesBtns.forEach(btn => {
         let choise = btn.textContent
         let categorie = quizData[choise]
         showQuestions(categorie)
+        startTime = new Date()
     })
-
-    let timeYouTake = setInterval(() => {
-        count++
-    },1000)
 })
 
 function showQuestions(categorie) {
@@ -242,6 +238,8 @@ function showQuestions(categorie) {
     let nextBtn = document.createElement("button")
     nextBtn.textContent = "suivant"
     nextBtn.addEventListener("click",() => {
+        clearInterval(timeForNext)
+        time = 30
         showNext(categorie,length)
     })
     questionShow.append(p, timer, div, nextBtn)    
@@ -250,11 +248,10 @@ function showQuestions(categorie) {
 function showNext(categorie,length) {
     if(index === length) {
         clearInterval(timeToNext)
-        clearInterval(timeYouTake)
-        index = 0
+        let endTime = new Date()
+        let totalSeconds = Math.floor((endTime - startTime) / 1000)
         let t = document.createElement("p")
-        t.textContent = `your time is ${count}`
-        count = 0
+        t.textContent = `your time is ${totalSeconds}`
         let p = document.createElement("p")
         p.textContent = `tes points sont ${points}`
         let againBtn = document.createElement("button")
@@ -312,6 +309,7 @@ function playAgain() {
 
     showHighScore.textContent = `high score is ${highScore}`;
     points = 0;
+    index = 0
 }
 
 function showCorrect(answer) {
