@@ -190,8 +190,9 @@ let points = 0
 categoriesBtns.forEach(btn => {
     btn.addEventListener("click",() => {
         let choise = btn.textContent
-        let categorie = quizData[choise]
-        showQuestions(categorie)
+        let categorie1 = quizData[choise].sort(() => Math.random() )
+        const categorie2 = categorie1.sort(() => Math.random() - 0.5);
+        showQuestions(categorie2)
         startTime = new Date()
     })
 })
@@ -218,11 +219,16 @@ function showQuestions(categorie) {
         btn.addEventListener("click",() => {
             clearInterval(timeForNext)
             clearInterval(timeToNext)
+            nextBtn.disabled = false
             time = 30
             isCorrect(btn,answer)
         })
         div.appendChild(btn)
     })
+
+    let nextBtn = document.createElement("button")
+    nextBtn.textContent = "suivant"
+    nextBtn.disabled = true
 
     timeForNext = setInterval(() => {
         time--
@@ -232,11 +238,10 @@ function showQuestions(categorie) {
     timeToNext = setInterval(() => {
         clearInterval(timeForNext)
         time = 30
+        nextBtn.disabled = false
         showCorrect(answer)
     },30000)
 
-    let nextBtn = document.createElement("button")
-    nextBtn.textContent = "suivant"
     nextBtn.addEventListener("click",() => {
         clearInterval(timeForNext)
         time = 30
@@ -251,7 +256,7 @@ function showNext(categorie,length) {
         let endTime = new Date()
         let totalSeconds = Math.floor((endTime - startTime) / 1000)
         let t = document.createElement("p")
-        t.textContent = `your time is ${totalSeconds}`
+        t.textContent = `your time is ${totalSeconds}s`
         let p = document.createElement("p")
         p.textContent = `tes points sont ${points}`
         let againBtn = document.createElement("button")
@@ -324,3 +329,5 @@ function showCorrect(answer) {
 }
 
 showHighScore.textContent = `high score is ${highScore}`
+
+
